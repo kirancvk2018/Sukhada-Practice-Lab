@@ -465,9 +465,15 @@ const EMPLOYEE_CODE = 'RUNBOOK2026'; // change this to your own team access code
 /* ---- Supabase (shared database) ----
    This is the primary storage backend once these two values are filled in —
    every visitor (employee or participant), on any device, reads and writes
-   the same data. Fill these in from Supabase → Settings → API. */
-const SUPABASE_URL = 'https://gvkhxbhebrjgyikmavia.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_7BsVMOwpeBKfIA72ye3uwA_oP1KdwTG';
+   the same data. Fill these in from Supabase → Settings → API.
+   
+   DISABLED FOR LOCAL USE - Using localStorage instead.
+   To enable Supabase, add your credentials below:
+   const SUPABASE_URL = 'https://your-project.supabase.co';
+   const SUPABASE_KEY = 'your_anon_public_key';
+*/
+const SUPABASE_URL = '';
+const SUPABASE_KEY = '';
 const SUPABASE_TABLE = 'academy_state';
 const SUPABASE_ROW_ID = 'main';
 const useSupabase = !!(SUPABASE_URL && SUPABASE_KEY);
