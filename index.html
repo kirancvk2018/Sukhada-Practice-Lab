@@ -54,6 +54,46 @@
 
   .shell{max-width:1180px; margin:0 auto; padding:30px 28px 90px;}
 
+  .conn-result{margin-top:14px; padding:14px 16px; border-radius:9px; border:1px solid var(--border); background:var(--panel-alt); font-size:12.5px;}
+  .conn-result.ok{border-color:var(--accent); background:var(--accent-dim);}
+  .conn-result.bad{border-color:var(--red); background:var(--red-dim);}
+  .conn-result .cr-head{font-weight:700; margin-bottom:10px; line-height:1.5;}
+  .conn-result.ok .cr-head{color:#065F46;}
+  .conn-result.bad .cr-head{color:#991B1B;}
+  .cr-line{display:flex; gap:9px; align-items:flex-start; padding:5px 0; line-height:1.5;}
+  .cr-line .cr-ico{font-weight:800; flex-shrink:0;}
+  .cr-line.ok .cr-ico{color:var(--accent2);}
+  .cr-line.bad .cr-ico{color:var(--red);}
+  .cr-fix{color:var(--text-dim); font-size:12px; margin-top:3px;}
+
+  .pri-legend{margin-top:24px; padding:18px 20px; border-radius:11px; border:1px solid var(--border-soft); background:var(--panel-alt);}
+  .pri-legend .pl-title{font-family:var(--mono); font-size:12.5px; font-weight:700; color:var(--text); margin-bottom:6px;}
+  .pri-legend .pl-sub{font-size:12.5px; line-height:1.55; color:var(--text-dim); margin:0 0 13px;}
+  .pri-legend .pl-foot{font-size:11.5px; line-height:1.5; color:var(--text-faint); margin:13px 0 0;}
+  .pl-grid{display:flex; flex-direction:column; gap:8px;}
+  .pl-row{display:flex; align-items:flex-start; gap:11px; flex-wrap:wrap;}
+  .pl-sev{font-family:var(--mono); font-size:10px; font-weight:800; letter-spacing:.05em; padding:3px 8px; border-radius:5px; flex-shrink:0; min-width:32px; text-align:center;}
+  .pl-sev.p1{background:var(--red-dim); color:var(--red);}
+  .pl-sev.p2{background:var(--amber-dim); color:var(--amber);}
+  .pl-sev.p3{background:var(--sky-dim); color:var(--sky);}
+  .pl-sev.p4{background:var(--panel-raise); color:var(--text-dim);}
+  .pl-map{font-size:12px; font-weight:600; color:var(--text); flex-shrink:0; min-width:172px;}
+  .pl-desc{font-size:12px; line-height:1.5; color:var(--text-dim); flex:1; min-width:220px;}
+
+  .mode-banner{max-width:1180px; margin:18px auto -6px; padding:13px 16px; border-radius:10px;
+    display:flex; align-items:flex-start; gap:11px; font-size:12.8px; line-height:1.5;
+    border:1px solid var(--amber); background:var(--amber-dim); color:#7C4A03;}
+  .mode-banner.ok{border-color:var(--accent); background:var(--accent-dim); color:#065F46;}
+  .mode-banner .mb-ico{font-size:15px; line-height:1.2;}
+  .mode-banner b{font-weight:700;}
+  .mode-banner code{background:rgba(0,0,0,.06); padding:1px 5px; border-radius:4px; font-family:var(--mono); font-size:11.5px;}
+  .mode-pill{font-family:var(--mono); font-size:9.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+    padding:3px 9px; border-radius:20px; border:1px solid var(--amber); color:var(--amber); background:var(--amber-dim);}
+  .mode-pill.ok{border-color:var(--accent); color:var(--accent2); background:var(--accent-dim);}
+
+  .tag.status{background:var(--violet-dim); color:var(--violet); border-color:var(--violet-dim);}
+  .tag.ticket{background:var(--sky-dim); color:var(--sky); border-color:var(--sky-dim);}
+
   .btn{font-family:var(--mono); font-size:12px; font-weight:700; padding:10px 18px; border-radius:8px; cursor:pointer; border:1px solid var(--border); background:var(--panel-raise); color:var(--text-dim); transition:border-color .15s, color .15s, background .15s, transform .12s;}
   .btn:hover{color:var(--text); border-color:var(--text-faint); transform:translateY(-1px);}
   .btn.primary{background:linear-gradient(120deg, var(--accent), var(--accent2)); color:#fff; border-color:transparent; box-shadow:0 8px 20px -8px rgba(5,150,105,.5);}
@@ -292,6 +332,8 @@
     <div class="who" id="whoBox"></div>
   </div>
 
+  <div class="mode-banner" id="modeBanner" style="display:none;"></div>
+
   <div class="shell" id="shell">
 
     <!-- ============ LOGIN ============ -->
@@ -310,7 +352,7 @@
             <div class="login-error" id="participantError"></div>
             <div class="field">
               <label for="pName">Name</label>
-              <input id="pName" type="text" autocomplete="off" placeholder="e.g. Priya Shah">
+              <input id="pName" type="text" autocomplete="off" placeholder="Your name or employee ID">
             </div>
             <div class="field">
               <label for="pPin">PIN</label>
@@ -331,7 +373,7 @@
             <div class="field">
               <label for="eCode">Access Code</label>
               <input id="eCode" type="password" autocomplete="off" placeholder="Access code">
-              <div class="sub">Default code: <b>RUNBOOK2026</b> — change EMPLOYEE_CODE in the script to set your own.</div>
+              <div class="sub">Default code: <b>SUKHADA-L1-2026</b> — change EMPLOYEE_CODE in the script to set your own.</div>
             </div>
             <button class="btn primary login-submit" id="employeeLoginBtn">Log In to Dashboard</button>
           </div>
@@ -349,6 +391,10 @@
             <label for="newPName">Participant Name</label>
             <input id="newPName" type="text" autocomplete="off" placeholder="e.g. Priya Shah">
           </div>
+          <div class="field">
+            <label for="newPId">Employee ID <span style="font-weight:400; color:var(--text-faint);">(optional, keeps same-name trainees apart)</span></label>
+            <input id="newPId" type="text" autocomplete="off" placeholder="e.g. SI-2214">
+          </div>
           <button class="btn primary" id="createPBtn">Generate Login</button>
         </div>
         <div class="cred-card" id="credCard">
@@ -359,6 +405,15 @@
             <button class="btn small" id="copyCredBtn" style="margin-left:auto;">Copy</button>
           </div>
         </div>
+      </div>
+
+      <div class="card-panel" style="margin-bottom:22px;">
+        <div class="section-title">Connection</div>
+        <p style="font-size:12.5px; color:var(--text-dim); line-height:1.55; margin:0 0 12px;">
+          Check this before every session. It confirms participants will be able to log in from their own devices.
+        </p>
+        <button class="btn" id="testConnBtn">Test connection</button>
+        <div class="conn-result" id="connResult" style="display:none;"></div>
       </div>
 
       <div class="card-panel">
@@ -389,7 +444,22 @@
         <div class="intro-steps">
           <div><span class="n">01</span><p class="t">Drag each card from the tray into the slot where it belongs — or tap a card, then tap a slot.</p></div>
           <div><span class="n">02</span><p class="t">The tray includes distractor steps pulled from other scenarios. Not every card belongs.</p></div>
-          <div><span class="n">03</span><p class="t">Submit when ready. Each slot is marked correct or incorrect, and your score is saved to your dashboard automatically.</p></div>
+          <div><span class="n">03</span><p class="t">Order matters in the pre-checks and the resolve path. In the escalate / vendor / approval branch the order is <b>not</b> graded — only that the right steps are there.</p></div>
+          <div><span class="n">04</span><p class="t">Submit when ready. Each slot is marked correct or incorrect, and your score is saved to your dashboard automatically.</p></div>
+        </div>
+
+        <div class="pri-legend">
+          <div class="pl-title">How ticket priority maps to severity</div>
+          <p class="pl-sub">Every scenario here is a real row from the Technical Support ticket tracker. The tracker records
+            <b>High / Medium / Low</b>; L1 works in <b>P1&ndash;P4</b>. This is the rule used throughout:</p>
+          <div class="pl-grid">
+            <div class="pl-row"><span class="pl-sev p1">P1</span><span class="pl-map">Tracker <b>High</b></span><span class="pl-desc">Outage, severe degradation, or data-protection risk. Immediate triage, continuous ownership.</span></div>
+            <div class="pl-row"><span class="pl-sev p2">P2</span><span class="pl-map">Tracker <b>Medium</b> &mdash; unplanned</span><span class="pl-desc">Something is already degraded: a blocked user, a capacity risk, a reduced resilience margin.</span></div>
+            <div class="pl-row"><span class="pl-sev p3">P3</span><span class="pl-map">Tracker <b>Medium</b> &mdash; planned</span><span class="pl-desc">Approved change inside a maintenance window, with a rollback option.</span></div>
+            <div class="pl-row"><span class="pl-sev p4">P4</span><span class="pl-map">Tracker <b>Low</b></span><span class="pl-desc">Routine request, lifecycle work, or an alert that already recovered on its own.</span></div>
+          </div>
+          <p class="pl-foot">SLA figures shown on each scenario are the tracker&rsquo;s estimated resolution hours. They are planning
+            estimates, not contractual commitments &mdash; your organisation&rsquo;s approved impact-and-urgency matrix always takes precedence.</p>
         </div>
       </div>
 
@@ -403,6 +473,8 @@
             <span class="tag sev" id="probSev"></span>
             <span class="tag sla" id="probSla"></span>
             <span class="tag trig" id="probTrig"></span>
+            <span class="tag ticket" id="probTicket"></span>
+            <span class="tag status" id="probStatus"></span>
           </div>
         </div>
 
@@ -456,100 +528,313 @@
   <div class="toast" id="toast"></div>
 
 <script>
-/* ================================================================
-   STORAGE
+/* ████████████████████████████████████████████████████████████████
+   ██  SETTINGS — EDIT THESE FOUR LINES, THEN SAVE. NOTHING ELSE. ██
+   ████████████████████████████████████████████████████████████████
+
+   1. SUPABASE_URL / SUPABASE_KEY
+      Required for a group. Get them from supabase.com:
+        · create a free account and a new project
+        · SQL Editor -> New query -> paste the block below -> Run
+        · Settings -> API Keys -> copy the "Publishable key" (sb_publishable_...)
+          Older projects show this as the "anon public" key instead — either works.
+          NEVER use the Secret key here. This file is readable by anyone.
+
+          create table academy_state (
+            id text primary key,
+            data jsonb,
+            updated_at timestamptz default now()
+          );
+          alter table academy_state enable row level security;
+          create policy "academy all" on academy_state
+            for all using (true) with check (true);
+
+      Leave them empty and the app still runs, but only on this one
+      browser — see the amber banner at the top of the page.
+
+   2. EMPLOYEE_CODE — the instructor password. Change it.
+
+   After saving, open the page, log in on the Employee tab and press
+   "Test connection". It will tell you exactly what is wrong if
+   anything is.
    ================================================================ */
-const STORAGE_KEY = 'academy-data-v1';
-const EMPLOYEE_CODE = 'RUNBOOK2026'; // change this to your own team access code
+const SUPABASE_URL   = 'https://paiwgudospzlavfqaked.supabase.co';
+const SUPABASE_KEY   = 'sb_publishable_tUMoKkv9KEouAKvZxAzq3Q_w9sOJ5BF';
+const EMPLOYEE_CODE  = 'SUKHADA-L1-2026';
 
-/* ---- Supabase (shared database) ----
-   This is the primary storage backend once these two values are filled in —
-   every visitor (employee or participant), on any device, reads and writes
-   the same data. Fill these in from Supabase → Settings → API.
-   
-   DISABLED FOR LOCAL USE - Using localStorage instead.
-   To enable Supabase, add your credentials below:
-   const SUPABASE_URL = 'https://your-project.supabase.co';
-   const SUPABASE_KEY = 'your_anon_public_key';
-*/
-const SUPABASE_URL = '';
-const SUPABASE_KEY = '';
+/* ================================================================
+   STORAGE  (v2 — sharded, collision-safe)
+   ----------------------------------------------------------------
+   v1 kept EVERYTHING in one JSON blob and rewrote the whole thing on
+   every submission. With a class of 45 that meant two people finishing
+   an exercise at the same moment silently overwrote each other.
+
+   v2 gives every participant their own row:
+       p:<key>   ->  the participant record   (written once, at creation)
+       a:<key>   ->  that person's attempts   (written only by them)
+   Nobody ever writes a row that belongs to somebody else, so concurrent
+   submissions cannot collide no matter how many people are practising.
+   ================================================================ */
+const KEY_PREFIX     = 'runbook-academy-v2';
+
 const SUPABASE_TABLE = 'academy_state';
-const SUPABASE_ROW_ID = 'main';
-const useSupabase = !!(SUPABASE_URL && SUPABASE_KEY);
+const useSupabase    = !!(SUPABASE_URL && SUPABASE_KEY);
 
-/* Fallbacks, used only if Supabase isn't configured above:
-   1) Claude's artifact storage (window.storage) — only exists inside Claude's
-      artifact preview, shared across everyone who opens that artifact.
-   2) The browser's own localStorage — works anywhere, but data stays on
-      that one browser/device only. */
-const hasArtifactStorage = (typeof window.storage !== 'undefined') && window.storage && typeof window.storage.get === 'function';
+const P_PREFIX = 'p:';
+const A_PREFIX = 'a:';
 
-async function loadData(){
-  try{
-    if(useSupabase){
-      const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?id=eq.${SUPABASE_ROW_ID}&select=data`,
-        { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
-      );
-      if(!res.ok) throw new Error('Supabase read failed: '+res.status);
-      const rows = await res.json();
-      const parsed = (rows[0] && rows[0].data) ? rows[0].data : {};
-      parsed.participants = parsed.participants || {};
-      parsed.attempts = parsed.attempts || {};
-      return parsed;
-    } else if(hasArtifactStorage){
-      const res = await window.storage.get(STORAGE_KEY, true);
-      if(!res) return {participants:{}, attempts:{}};
-      const parsed = JSON.parse(res.value);
-      parsed.participants = parsed.participants || {};
-      parsed.attempts = parsed.attempts || {};
-      return parsed;
-    } else {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if(!raw) return {participants:{}, attempts:{}};
-      const parsed = JSON.parse(raw);
-      parsed.participants = parsed.participants || {};
-      parsed.attempts = parsed.attempts || {};
-      return parsed;
-    }
-  }catch(e){
-    console.error('loadData failed', e);
-    showToast('Could not reach the database — check your connection');
-    return {participants:{}, attempts:{}};
-  }
+/* Supabase has two key formats in circulation:
+     legacy  'eyJ...'            — a JWT, valid on both headers
+     new     'sb_publishable_...' — NOT a JWT. Sending it as a Bearer token
+                                    makes anything that tries to parse it as
+                                    a JWT reject the request.
+   So the Bearer header is only added for legacy keys. */
+const isLegacyJwtKey = /^eyJ/.test(SUPABASE_KEY || '');
+
+function sbHeaders(extra){
+  const h = { apikey: SUPABASE_KEY, 'Content-Type': 'application/json' };
+  if(isLegacyJwtKey) h.Authorization = `Bearer ${SUPABASE_KEY}`;
+  return Object.assign(h, extra || {});
 }
-async function saveData(data){
-  try{
-    if(useSupabase){
-      const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?on_conflict=id`,
-        {
-          method:'POST',
-          headers:{
-            apikey: SUPABASE_KEY,
-            Authorization: `Bearer ${SUPABASE_KEY}`,
-            'Content-Type':'application/json',
-            Prefer:'resolution=merge-duplicates,return=minimal'
-          },
-          body: JSON.stringify([{ id: SUPABASE_ROW_ID, data, updated_at: new Date().toISOString() }])
-        }
-      );
-      if(!res.ok) throw new Error('Supabase write failed: '+res.status);
-      return true;
-    } else if(hasArtifactStorage){
-      const result = await window.storage.set(STORAGE_KEY, JSON.stringify(data), true);
-      return !!result;
-    } else {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      return true;
-    }
-  }catch(e){
-    console.error('Storage save failed', e);
-    return false;
+
+/* ---- single-row primitives ---- */
+async function rowGet(id){
+  if(useSupabase){
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?id=eq.${encodeURIComponent(id)}&select=data`,
+      { headers: sbHeaders() }
+    );
+    if(!res.ok) throw new Error('read failed: '+res.status);
+    const rows = await res.json();
+    return rows[0] ? rows[0].data : null;
   }
+  const raw = localStorage.getItem(`${KEY_PREFIX}:${id}`);
+  return raw ? JSON.parse(raw) : null;
 }
+
+async function rowPut(id, data){
+  if(useSupabase){
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?on_conflict=id`,
+      { method:'POST',
+        headers: sbHeaders({ Prefer:'resolution=merge-duplicates,return=minimal' }),
+        body: JSON.stringify([{ id, data, updated_at:new Date().toISOString() }]) }
+    );
+    if(!res.ok) throw new Error('write failed: '+res.status);
+    return true;
+  }
+  localStorage.setItem(`${KEY_PREFIX}:${id}`, JSON.stringify(data));
+  return true;
+}
+
+async function rowDelete(id){
+  if(useSupabase){
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?id=eq.${encodeURIComponent(id)}`,
+      { method:'DELETE', headers: sbHeaders() }
+    );
+    if(!res.ok) throw new Error('delete failed: '+res.status);
+    return true;
+  }
+  localStorage.removeItem(`${KEY_PREFIX}:${id}`);
+  return true;
+}
+
+async function rowList(prefix){
+  if(useSupabase){
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?id=like.${encodeURIComponent(prefix + '*')}&select=id,data`,
+      { headers: sbHeaders() }
+    );
+    if(!res.ok) throw new Error('list failed: '+res.status);
+    const rows = await res.json();
+    const out = {};
+    rows.forEach(r => { out[r.id.slice(prefix.length)] = r.data; });
+    return out;
+  }
+  const out = {};
+  const full = `${KEY_PREFIX}:${prefix}`;
+  for(let i=0; i<localStorage.length; i++){
+    const k = localStorage.key(i);
+    if(k && k.startsWith(full)){
+      try{ out[k.slice(full.length)] = JSON.parse(localStorage.getItem(k)); }catch(e){}
+    }
+  }
+  return out;
+}
+
+/* ---- domain API ---- */
+const Store = {
+  async listParticipants(){
+    try{ return await rowList(P_PREFIX); }
+    catch(e){ console.error(e); showToast('Could not load the roster — check your connection'); return {}; }
+  },
+  async getParticipant(key){
+    try{ return await rowGet(P_PREFIX + key); }
+    catch(e){ console.error(e); return null; }
+  },
+  async putParticipant(key, rec){
+    try{ await rowPut(P_PREFIX + key, rec); return true; }
+    catch(e){ console.error(e); return false; }
+  },
+  async removeParticipant(key){
+    try{ await rowDelete(P_PREFIX + key); await rowDelete(A_PREFIX + key); return true; }
+    catch(e){ console.error(e); return false; }
+  },
+  async getAttempts(key){
+    try{ const r = await rowGet(A_PREFIX + key); return (r && r.items) ? r.items : []; }
+    catch(e){ console.error(e); return []; }
+  },
+  async listAllAttempts(){
+    try{
+      const rows = await rowList(A_PREFIX);
+      const out = {};
+      Object.keys(rows).forEach(k => { out[k] = (rows[k] && rows[k].items) ? rows[k].items : []; });
+      return out;
+    }catch(e){ console.error(e); return {}; }
+  },
+  /* Append is scoped to one participant's own row, so two different
+     participants can never clobber one another. The re-read + dedupe
+     covers the only remaining case: the same person with two tabs open. */
+  async appendAttempt(key, attempt){
+    try{
+      const existing = await this.getAttempts(key);
+      const seen = new Set(existing.map(a => a.ts + '|' + a.scenarioId));
+      if(!seen.has(attempt.ts + '|' + attempt.scenarioId)) existing.push(attempt);
+      await rowPut(A_PREFIX + key, { items: existing });
+      return true;
+    }catch(e){ console.error(e); return false; }
+  }
+};
+
+/* ================================================================
+   CONNECTION SELF-TEST
+   Runs a real read + write + delete against the configured project and
+   translates whatever comes back into plain language.
+   ================================================================ */
+async function testConnection(){
+  const out = [];
+  const fail = (msg, fix) => ({ok:false, msg, fix});
+  const pass = (msg) => ({ok:true, msg});
+
+  if(!SUPABASE_URL || !SUPABASE_KEY){
+    return [fail('No Supabase details entered.',
+      'Open index.html in a text editor and fill in SUPABASE_URL and SUPABASE_KEY in the settings block at the top of the <script> section.')];
+  }
+  if(!/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/.test(SUPABASE_URL.trim())){
+    out.push(fail('The Project URL looks wrong: ' + SUPABASE_URL,
+      'It should look like https://abcdefghijkl.supabase.co — no trailing path, no /rest/v1 on the end.'));
+  }
+  if(/^sb_secret_/.test(SUPABASE_KEY.trim())){
+    return [fail('STOP — that is a SECRET key, and this file is public.',
+      'sb_secret_ keys bypass every security rule and must never go in a web page. Go to Settings -> API Keys, rotate that key immediately, then copy the "Publishable key" instead (it starts sb_publishable_).')];
+  }
+  if(/service_role/.test(SUPABASE_KEY)){
+    return [fail('STOP — that looks like the service_role key.',
+      'It bypasses all security and must never go in a web page. Rotate it, then use the anon / publishable key instead.')];
+  }
+  if(!/^(eyJ|sb_publishable_)/.test(SUPABASE_KEY.trim())){
+    out.push(fail('That does not look like a Supabase key.',
+      'It should start with "sb_publishable_" (new format) or "eyJ" (legacy anon key). Copy it from Settings -> API Keys.'));
+  }
+  if(SUPABASE_KEY.length < 40){
+    out.push(fail('The key looks too short — it may have been truncated.',
+      'Copy the full Publishable key from Settings -> API Keys using the copy button, not by selecting the shortened text on screen.'));
+  }
+  if(out.length) return out;
+
+  const testId = '__conntest__' + Date.now();
+
+  // --- READ ---
+  try{
+    const res = await fetch(
+      `${SUPABASE_URL.replace(/\/$/,'')}/rest/v1/${SUPABASE_TABLE}?select=id&limit=1`,
+      { headers: sbHeaders() });
+    if(res.status === 401 || res.status === 403){
+      return [fail('Rejected the key (HTTP ' + res.status + ').',
+        'Either the anon key is wrong, or row level security is blocking access. Re-run the "create policy" line from the setup SQL.')];
+    }
+    if(res.status === 404){
+      return [fail('Table "' + SUPABASE_TABLE + '" not found (HTTP 404).',
+        'Run the create table SQL from the settings comment in the Supabase SQL Editor.')];
+    }
+    if(!res.ok){
+      return [fail('Read failed with HTTP ' + res.status + '.', 'Check the Supabase dashboard — the project may be paused.')];
+    }
+    out.push(pass('Read from the database — OK'));
+  }catch(e){
+    return [fail('Could not reach the project at all.',
+      'Check the URL is right and the project is not paused. If it is paused, open the Supabase dashboard and press Restore.')];
+  }
+
+  // --- WRITE ---
+  try{
+    await rowPut(testId, {probe:true});
+    out.push(pass('Write to the database — OK'));
+  }catch(e){
+    out.push(fail('Write was refused.',
+      'Reads work but writes do not — the row level security policy is read-only. Re-run the "create policy ... with check (true)" line.'));
+    return out;
+  }
+
+  // --- READ BACK ---
+  try{
+    const back = await rowGet(testId);
+    out.push(back && back.probe ? pass('Read the test row back — OK')
+                                : fail('Wrote a row but could not read it back.', 'Check the RLS select policy.'));
+  }catch(e){
+    out.push(fail('Could not read the test row back.', 'Check the RLS select policy.'));
+  }
+
+  // --- CLEANUP ---
+  try{
+    await rowDelete(testId);
+    out.push(pass('Cleaned up the test row — OK'));
+  }catch(e){
+    out.push(fail('Could not delete the test row.',
+      'Harmless for training use — it just means the Remove button on the roster will not work. Add a delete policy if you want it.'));
+  }
+  return out;
+}
+
+async function runConnectionTest(){
+  const btn = document.getElementById('testConnBtn');
+  const box = document.getElementById('connResult');
+  btn.disabled = true; btn.textContent = 'Testing…';
+  box.style.display = 'block';
+  box.innerHTML = '<div class="load-note">Running read / write / delete against your project…</div>';
+  const results = await testConnection();
+  btn.disabled = false; btn.textContent = 'Test connection';
+  const allOk = results.every(r => r.ok);
+  box.className = 'conn-result ' + (allOk ? 'ok' : 'bad');
+  box.innerHTML = '';
+  const head = el('div','cr-head', allOk
+    ? '✅ Connected. Logins and scores will be shared across every device.'
+    : '❌ Not connected — participants will not be able to log in from their own machines.');
+  box.appendChild(head);
+  results.forEach(r=>{
+    const line = el('div','cr-line ' + (r.ok?'ok':'bad'));
+    line.innerHTML = `<span class="cr-ico">${r.ok?'✓':'✗'}</span><div><div>${escapeHtml(r.msg)}</div>` +
+      (r.fix ? `<div class="cr-fix">${escapeHtml(r.fix)}</div>` : '') + '</div>';
+    box.appendChild(line);
+  });
+}
+
 function genPin(){ return String(Math.floor(1000 + Math.random()*9000)); }
+
+/* PIN uniqueness guard — v1 generated blind, which gave roughly a 1-in-10
+   chance of a duplicate PIN somewhere in a cohort of 45. */
+function genUniquePin(taken){
+  for(let i=0; i<400; i++){
+    const p = genPin();
+    if(!taken.has(p)) return p;
+  }
+  for(let i=0; i<400; i++){
+    const p = String(Math.floor(100000 + Math.random()*900000));
+    if(!taken.has(p)) return p;
+  }
+  return genPin();
+}
 
 function showToast(msg){
   const t = document.getElementById('toast');
@@ -639,11 +924,20 @@ async function participantLogin(){
   }
   const btn = document.getElementById('participantLoginBtn');
   btn.disabled = true; btn.textContent = 'Checking…';
-  const data = await loadData();
+  const all = await Store.listParticipants();
   btn.disabled = false; btn.textContent = 'Log In & Start Practicing';
-  const key = name.toLowerCase();
-  const rec = data.participants[key];
-  if(rec && rec.pin === pin){
+
+  // accept either the participant's name or their employee ID
+  const needle = normKey(name);
+  let key = null;
+  Object.keys(all).forEach(k=>{
+    const r = all[k];
+    if(!r) return;
+    if(k === needle || normKey(r.name) === needle || (r.empId && normKey(r.empId) === needle)) key = k;
+  });
+  const rec = key ? all[key] : null;
+
+  if(rec && String(rec.pin) === pin){
     session = {role:'participant', name: rec.name, key};
     renderWhoBox();
     showScreen('participant');
@@ -653,6 +947,8 @@ async function participantLogin(){
     errEl.classList.add('show');
   }
 }
+
+function normKey(v){ return String(v||'').trim().toLowerCase().replace(/\s+/g,' '); }
 
 /* ---- employee login ---- */
 document.getElementById('employeeLoginBtn').addEventListener('click', employeeLogin);
@@ -681,6 +977,28 @@ function employeeLogin(){
    ================================================================ */
 document.getElementById('createPBtn').addEventListener('click', createParticipant);
 document.getElementById('newPName').addEventListener('keydown', e=>{ if(e.key==='Enter') createParticipant(); });
+document.getElementById('newPId').addEventListener('keydown', e=>{ if(e.key==='Enter') createParticipant(); });
+document.getElementById('testConnBtn').addEventListener('click', runConnectionTest);
+
+/* Makes the storage mode impossible to miss. In local mode the instructor's
+   roster lives only in the instructor's browser, so 45 people cannot share it. */
+function renderStorageBanner(){
+  const b = document.getElementById('modeBanner');
+  if(!b) return;
+  b.style.display = 'flex';
+  if(useSupabase){
+    b.className = 'mode-banner ok';
+    b.innerHTML = `<span class="mb-ico">🟢</span><div><b>Shared mode.</b> Logins and scores are stored in the shared database,
+      so participants can sign in from any device and the instructor dashboard sees everyone.</div>`;
+  } else {
+    b.className = 'mode-banner';
+    b.innerHTML = `<span class="mb-ico">⚠️</span><div><b>Local mode — single device only.</b>
+      Logins and scores are saved in <i>this browser</i> and nowhere else. Participants created here
+      <b>cannot log in from their own machines</b>, and the instructor dashboard will not see their work.
+      To run this for a group, fill in <code>SUPABASE_URL</code> and <code>SUPABASE_KEY</code> near the top of the
+      &lt;script&gt; block — setup instructions are in the comment right above them.</div>`;
+  }
+}
 
 async function enterEmployee(){
   document.getElementById('credCard').classList.remove('show');
@@ -689,27 +1007,47 @@ async function enterEmployee(){
 }
 
 async function createParticipant(){
-  const input = document.getElementById('newPName');
-  const name = input.value.trim();
+  const input  = document.getElementById('newPName');
+  const idInput = document.getElementById('newPId');
+  const name   = input.value.trim();
+  const empId  = idInput ? idInput.value.trim() : '';
   if(!name){ showToast('Enter a participant name first'); return; }
+
   const btn = document.getElementById('createPBtn');
   btn.disabled = true; btn.textContent = 'Creating…';
-  const data = await loadData();
-  const key = name.toLowerCase();
+
+  const all = await Store.listParticipants();
+  // identity key: employee ID when supplied, otherwise the normalised name
+  const key = empId ? 'id-' + normKey(empId) : normKey(name);
+
   let pin;
-  if(data.participants[key]){
-    pin = data.participants[key].pin;
-    showToast(`${name} already has a login — showing existing credentials`);
+  if(all[key]){
+    pin = all[key].pin;
+    btn.disabled = false; btn.textContent = 'Generate Login';
+    showToast(`${all[key].name} already has a login — showing existing credentials`);
   } else {
-    pin = genPin();
-    data.participants[key] = {name, pin, createdAt: Date.now(), createdBy: session ? session.name : ''};
-    data.attempts[key] = data.attempts[key] || [];
-    const ok = await saveData(data);
-    if(!ok) showToast('Could not save — try again');
+    // warn on a same-name clash so two trainees never share one record
+    const clash = Object.keys(all).find(k => normKey(all[k].name) === normKey(name));
+    if(clash && !empId){
+      btn.disabled = false; btn.textContent = 'Generate Login';
+      showToast(`Another "${name}" already exists — add an employee ID to keep them separate`);
+      if(idInput) idInput.focus();
+      return;
+    }
+    const taken = new Set(Object.values(all).map(r => String(r.pin)));
+    pin = genUniquePin(taken);
+    const ok = await Store.putParticipant(key, {
+      name, empId: empId || null, pin,
+      createdAt: Date.now(),
+      createdBy: session ? session.name : ''
+    });
+    btn.disabled = false; btn.textContent = 'Generate Login';
+    if(!ok){ showToast('Could not save — try again'); return; }
   }
-  btn.disabled = false; btn.textContent = 'Generate Login';
+
   input.value = '';
-  document.getElementById('credName').textContent = name;
+  if(idInput) idInput.value = '';
+  document.getElementById('credName').textContent = name + (empId ? ` (${empId})` : '');
   document.getElementById('credPin').textContent = pin;
   document.getElementById('credCard').classList.add('show');
   await refreshRoster();
@@ -738,7 +1076,9 @@ async function refreshRoster(){
   const wrap = document.getElementById('rosterWrap');
   const statRow = document.getElementById('employeeStatRow');
   wrap.innerHTML = '<div class="load-note">Loading roster…</div>';
-  const data = await loadData();
+  const participants = await Store.listParticipants();
+  const attemptsByKey = await Store.listAllAttempts();
+  const data = { participants, attempts: attemptsByKey };
   const names = Object.keys(data.participants).sort((a,b)=> data.participants[a].name.localeCompare(data.participants[b].name));
 
   let totalAttempts = 0, totalSolved = 0;
@@ -749,8 +1089,9 @@ async function refreshRoster(){
   });
   statRow.innerHTML = '';
   statRow.appendChild(el('div','stat-chip', `Participants <b>${names.length}</b>`));
-  statRow.appendChild(el('div','stat-chip', `Total demo attempts <b>${totalAttempts}</b>`));
+  statRow.appendChild(el('div','stat-chip', `Total attempts <b>${totalAttempts}</b>`));
   statRow.appendChild(el('div','stat-chip', `Perfect runs <b>${totalSolved}</b>`));
+  statRow.appendChild(el('div','stat-chip', `Scenarios available <b>${PROBLEMS.length}</b>`));
 
   if(names.length === 0){
     wrap.innerHTML = '<div class="empty-note">No participants yet — create a login above to get started.</div>';
@@ -772,7 +1113,7 @@ async function refreshRoster(){
 
     const row = el('tr','roster-row');
     row.innerHTML = `
-      <td class="name-cell">${escapeHtml(p.name)}</td>
+      <td class="name-cell">${escapeHtml(p.name)}${p.empId ? ` <span style="color:var(--text-faint);font-weight:400;">· ${escapeHtml(p.empId)}</span>` : ''}</td>
       <td class="pin-cell">${escapeHtml(p.pin)}</td>
       <td>${attempts}</td>
       <td>${solved}</td>
@@ -815,11 +1156,8 @@ async function refreshRoster(){
       e.stopPropagation();
       const key = btn.getAttribute('data-del');
       const p = data.participants[key];
-      if(!confirm(`Remove ${p.name}'s login and demo history?`)) return;
-      const fresh = await loadData();
-      delete fresh.participants[key];
-      delete fresh.attempts[key];
-      await saveData(fresh);
+      if(!confirm(`Remove ${p.name}'s login and attempt history?`)) return;
+      await Store.removeParticipant(key);
       showToast(`${p.name} removed`);
       await refreshRoster();
     });
@@ -830,189 +1168,418 @@ async function refreshRoster(){
    PARTICIPANT DEMO (runbook assembly game)
    ================================================================ */
 const RAW_PROBLEMS = [
-{id:'disk-util', title:'Disk Utilization Issue', sev:'P3', sla:'4h SLA', trigger:'Monitoring Alert',
- scope:'Monitoring alert or user report that a volume/partition has crossed the utilization threshold (typically 85%).',
+
+// ===== STORAGE & CAPACITY (2 scenarios) =====
+
+{id:'disk-util', title:'[P1] Disk Utilization Issue - INC000101', difficulty:'beginner', 
+ sev:'P1', sla:'3h SLA', trigger:'Monitoring Alert',
+ scope:'Production application server disk utilization reached 95%, causing low-space alerts and risk of application interruption.',
+ ticket:'INC000101', client:'Client A', team:'Windows Operations', category:'Storage / Capacity', status:'Resolved',
  pre:[
-   {label:'Log & Classify', desc:'Ticket logged, priority set to P3, SLA clock starts.'},
-   {label:'Initial Diagnosis', desc:'Confirm host/mount point, verify usage, identify top consumers.'}
+   {label:'Log & Classify', desc:'Alert logged, priority set to P1, SLA clock starts.'},
+   {label:'Initial Assessment', desc:'Identify current disk usage; check for large/stale files; review recent changes.'}
  ],
- decision:'Can space be reclaimed by cleanup without impacting the application?',
+ decision:'Can we free space quickly using approved cleanup, or do we need to extend the volume?',
  resolve:[
-   {label:'Remediate', desc:'Archive/purge rotated logs, clear temp/cache, remove old core dumps.'},
-   {label:'Validate', desc:'Confirm the reported symptom has cleared and monitoring shows normal state.'}
+   {label:'Analyze', desc:'Find large/stale files using disk analysis tools; check log rotation and temp directories.'},
+   {label:'Clean Up Safely', desc:'Clear approved temporary data; move logs to archive if permitted; confirm freed space.'},
+   {label:'Extend If Needed', desc:'Extend virtual disk and OS partition/volume if insufficient cleanup space; update monitoring.'},
+   {label:'Validate', desc:'Confirm disk is back to safe levels (< 85%); monitoring alert cleared; disk usage trending normal.'}
  ],
  escalate:[
-   {label:'Raise Change / Escalate', desc:'Cleanup insufficient — raise a Disk Size Increase change or escalate to Storage/Infra.'}
+   {label:'Storage Assessment', desc:'Contact Storage team for capacity planning if insufficient space available or cleanup not possible.'},
+   {label:'Emergency Expansion', desc:'Request emergency storage expansion if cleanup insufficient and extension not possible.'}
  ]},
 
-{id:'cpu-util', title:'CPU Utilization Issue', sev:'P3', sla:'4h SLA', trigger:'Monitoring Alert',
- scope:'Alert or report of sustained high CPU (above 90% for 15+ minutes) on a server.',
+{id:'disk-increase', title:'[P2] Disk Size Increase - INC000111', difficulty:'intermediate',
+ sev:'P2', sla:'2h SLA', trigger:'Change Request',
+ scope:'Increase the data volume by 200 GB because projected growth will exhaust available space.',
+ ticket:'INC000111', client:'Client K', team:'Windows Operations', category:'Storage / Capacity', status:'Resolved',
  pre:[
-   {label:'Log & Classify', desc:'Ticket logged, priority set to P3, SLA clock starts.'},
-   {label:'Initial Diagnosis', desc:'Find the top consuming process, check the trend, check for recent deployments.'}
+   {label:'Verify CR & Scope', desc:'Confirm change request/approval and the exact new size required.'},
+   {label:'Readiness Checks', desc:'Check backend storage capacity available; confirm current backup exists; verify change window approved.'}
  ],
- decision:'Is there a single identifiable process or job causing the spike?',
+ decision:'Is there enough backend storage capacity for the 200GB increase?',
  resolve:[
-   {label:'Remediate', desc:'Restart or gracefully stop the offending process/service.'},
-   {label:'Validate', desc:'Monitor 15 minutes to confirm CPU normalizes; document cause.'}
+   {label:'Execute Change', desc:'Extend virtual disk on storage/hypervisor platform to new size.'},
+   {label:'Extend Filesystem', desc:'Extend OS partition/filesystem to recognize new space; run filesystem checks.'},
+   {label:'Post-Change Validation', desc:'Verify new capacity reported correctly by OS; update monitoring thresholds; close CR.'}
  ],
  escalate:[
-   {label:'Raise for Capacity Review', desc:'No single culprit — capture perf data, escalate for a resource review or resize.'}
+   {label:'Insufficient Capacity', desc:'Escalate to Storage team if backend capacity insufficient for requested expansion.'},
+   {label:'Tech Limitations', desc:'If filesystem doesn\'t support online expansion, escalate for alternative approaches.'}
  ]},
 
-{id:'disk-increase', title:'Disk Size Increase', sev:'P3', sla:'8h SLA', trigger:'Change Request',
- scope:'Approved request to expand a volume or partition, often following a disk utilization ticket.',
+// ===== PERFORMANCE (1 scenario) =====
+
+{id:'cpu-util', title:'[P1] CPU Utilization Issue - INC000102', difficulty:'intermediate',
+ sev:'P1', sla:'4h SLA', trigger:'Monitoring Alert',
+ scope:'CPU utilization remains above 90% on the order-processing server during business hours.',
+ ticket:'INC000102', client:'Client B', team:'Windows Operations', category:'Performance', status:'In Progress',
  pre:[
-   {label:'Verify CR & Scope', desc:'Confirm the change request/approval and the exact new size required.'},
-   {label:'Readiness Checks', desc:'Check datastore capacity, confirm a current backup exists, confirm the change window.'}
+   {label:'Log & Classify', desc:'Ticket logged, priority set to P1 (business-critical impact on order processing).'},
+   {label:'Initial Diagnosis', desc:'Identify top CPU-consuming processes; check recent jobs/deployments; review CPU baseline trends.'}
  ],
- decision:'Is there enough backend storage capacity for the increase?',
+ decision:'Is there a single identifiable process causing the spike, or is load systemic?',
  resolve:[
-   {label:'Execute Change', desc:'Extend the virtual disk, then extend the partition/filesystem.'},
-   {label:'Post-Change Validation', desc:'Verify the new size, confirm no I/O errors, and close the CR.'}
+   {label:'Analyze Processes', desc:'Use monitoring/performance tools to identify top CPU consumers; check Task Manager or perfmon.'},
+   {label:'Review Changes', desc:'Check for recent deployments, job executions, scheduled tasks, or configuration changes.'},
+   {label:'Remediate', desc:'Stop/restart offending process (with approval); adjust job scheduling; tune workload if possible.'},
+   {label:'Validate', desc:'Monitor CPU for 15+ minutes post-remediation to confirm stabilization and normal operation.'}
  ],
  escalate:[
-   {label:'Hold & Reschedule', desc:'Escalate to Storage for capacity procurement, then reschedule the change.'}
+   {label:'Capacity Review', desc:'If systemic load increase, escalate to management for capacity planning/resource allocation review.'},
+   {label:'Workload Analysis', desc:'Request L2 analysis if root cause complex or unclear; may require code optimization or workload rebalancing.'}
  ]},
 
-{id:'pwd-expiry', title:'User Password Expiry', sev:'P4', sla:'2h SLA', trigger:'User Request',
- scope:'User is locked out or notified that their domain/AD password has expired.',
+// ===== IDENTITY & ACCESS (2 scenarios) =====
+
+{id:'pwd-expiry', title:'[P2] User Password Expiry - INC000103', difficulty:'beginner',
+ sev:'P2', sla:'30m SLA', trigger:'User Request',
+ scope:'User cannot sign in because the domain password has expired.',
+ ticket:'INC000103', client:'Client C', team:'Service Desk', category:'Identity & Access', status:'Resolved',
  pre:[
-   {label:'Verify Requester Identity', desc:'Verify the requester per access-verification policy before touching the account.'},
-   {label:'Check Access State', desc:'Check account status in AD, confirm password policy and approval requirements.'}
+   {label:'Verify Identity', desc:'Confirm requester identity per company access verification policy before touching account.'},
+   {label:'Check Account State', desc:'Verify account status in Active Directory; confirm password policy; check account flags.'}
  ],
  decision:'Is self-service password reset enabled and available for this user?',
  resolve:[
-   {label:'Grant / Modify Access', desc:'Direct the user to the self-service reset portal; unlock the account.'},
-   {label:'Confirm With User', desc:'User confirms successful login; ticket closed with the reset noted.'}
+   {label:'Self-Service Path', desc:'Direct user to self-service password reset portal if available; confirm success.'},
+   {label:'If Portal Unavailable', desc:'Unlock account; instruct user to change password at next login attempt.'},
+   {label:'Confirm Access', desc:'Have user confirm successful login post-reset; document in ticket.'}
  ],
  escalate:[
-   {label:'Return / Escalate', desc:'Perform an admin reset via AD/PowerShell and escalate to IAM for restricted accounts.'}
+   {label:'Admin Reset', desc:'For restricted accounts or if self-service fails, perform admin password reset via AD/PowerShell.'},
+   {label:'Escalate to IAM', desc:'For service accounts or recurring issues, escalate to Identity & Access Management for review.'}
  ]},
 
-{id:'user-creation', title:'User Creation', sev:'P4', sla:'8h SLA', trigger:'HR / Manager Request',
- scope:'Request to create a new user or service account, typically with manager/HR approval.',
+{id:'user-creation', title:'[P4] User Creation - INC000104', difficulty:'beginner',
+ sev:'P4', sla:'2h SLA', trigger:'HR / Manager Request',
+ scope:'Create a new user account with approved baseline access for a new project associate.',
+ ticket:'INC000104', client:'Client D', team:'Identity Operations', category:'Identity & Access', status:'Pending Approval',
  pre:[
-   {label:'Verify Requester Identity', desc:'Confirm the request comes through an authorized channel with a named approver.'},
-   {label:'Check Access State', desc:'Verify approvals attached, confirm details, check for a duplicate account.'}
+   {label:'Verify Request', desc:'Confirm request comes from authorized channel (HR/Manager) with documented approval.'},
+   {label:'Check Details', desc:'Verify access profile/baseline assigned; confirm no duplicate account exists; check retention requirements.'}
  ],
- decision:'Are all approvals and account details complete?',
+ decision:'Are all approvals and account details complete and verified?',
  resolve:[
-   {label:'Grant / Modify Access', desc:'Create the account, place in correct OU/groups, set forced-change password.'},
-   {label:'Confirm With User', desc:'Notify the requester and new user; confirm first login succeeds.'}
+   {label:'Create Account', desc:'Create new user in Active Directory with correct name, email, and baseline groups.'},
+   {label:'Assign Groups', desc:'Place in correct Organizational Unit; assign to all required baseline groups and teams.'},
+   {label:'Configure Access', desc:'Set forced password change at next login; enable/disable features as per policy.'},
+   {label:'Notify User', desc:'Send onboarding instructions and temporary password via approved secure channel.'}
  ],
  escalate:[
-   {label:'Return / Escalate', desc:'Return the ticket to the requester for the missing approval/detail; place on hold.'}
+   {label:'Return for Completion', desc:'Return ticket to requester for missing approval, details, or access profile clarification.'},
+   {label:'Complex Access', desc:'Escalate unusual/complex access requests to Identity Operations for special handling.'}
  ]},
 
-{id:'server-down', title:'Server Down', sev:'P1', sla:'30m SLA', trigger:'Monitoring Alert',
- scope:'Monitoring shows a host unreachable, or a report that a server does not respond.',
+// ===== BACKUP & DISASTER RECOVERY (2 scenarios) =====
+
+{id:'backup-snapshot', title:'[P1] Backup / Snapshot Failure - INC000105', difficulty:'advanced',
+ sev:'P1', sla:'3h SLA', trigger:'Monitoring Alert',
+ scope:'Scheduled snapshot failed for a production database virtual machine.',
+ ticket:'INC000105', client:'Client E', team:'Backup Operations', category:'Backup / Snapshot', status:'In Progress',
  pre:[
-   {label:'Declare & Classify Severity', desc:'Confirmed unreachable — declared P1, SLA clock starts at 30 minutes.'},
-   {label:'Blast-Radius Assessment', desc:'Ping/traceroute, attempt out-of-band console access, check power and switch port.'}
+   {label:'Alert Verification', desc:'Confirm snapshot failure in backup monitoring dashboard; check all related logs.'},
+   {label:'Assess Impact', desc:'Determine recoverability status: when was last successful snapshot? What is RPO?'}
  ],
- decision:'Is the server reachable via out-of-band console (iLO/iDRAC)?',
+ decision:'Is the backup infrastructure healthy, or is there a critical blocking issue?',
  resolve:[
-   {label:'Contain & Remediate', desc:'Attempt a controlled restart/power cycle via console; watch the boot sequence.'},
-   {label:'Validate Recovery', desc:'Confirm services return and monitoring clears the alert.'}
+   {label:'Review Job Status', desc:'Check snapshot job logs; identify failure reason (space, locks, connectivity, timeout).'},
+   {label:'Clear Blockers', desc:'Remove stale snapshot locks (if safe/approved); free datastore space; resolve connectivity issues.'},
+   {label:'Retry Snapshot', desc:'Rerun the snapshot job manually with monitoring; confirm completion.'},
+   {label:'Validate Restore Point', desc:'Confirm new snapshot appears in backup catalog; test restore to verify usable.'}
  ],
  escalate:[
-   {label:'Escalate & Declare Bridge', desc:'Physical check required — escalate to Datacenter/Hardware; open a P1 bridge.'},
-   {label:'Specialist Team Remediates', desc:'Datacenter/Hardware team leads recovery on the bridge; L1 tracks comms.'}
+   {label:'Infrastructure Issue', desc:'If storage/datastore failure causing snapshots to fail, escalate to Storage/Infrastructure team.'},
+   {label:'Policy Review', desc:'If recurring failures, escalate for backup schedule review, policy changes, or infrastructure upgrade.'}
  ]},
 
-{id:'hw-host', title:'Hardware Host Issue', sev:'P2', sla:'4h SLA', trigger:'Monitoring Alert (iLO/iDRAC)',
- scope:'Physical host raising a hardware fault — disk, memory, PSU, or fan.',
+{id:'disaster-recovery', title:'[P1] Disaster Recovery - Server Restore - INC000112', difficulty:'advanced',
+ sev:'P1', sla:'6h SLA', trigger:'Incident',
+ scope:'Restore a production server from the latest approved recovery point after system file corruption.',
+ ticket:'INC000112', client:'Client L', team:'Backup Operations', category:'Disaster Recovery', status:'In Progress',
  pre:[
-   {label:'Acknowledge Hardware Alert', desc:'Alert acknowledged in monitoring; priority set to P2.'},
-   {label:'Redundancy Check', desc:'Identify the failed component and check redundancy status — RAID, PSU, cluster HA.'}
+   {label:'Assess Damage', desc:'Confirm extent of file corruption; identify which files/systems affected; assess data impact.'},
+   {label:'Verify Recovery Point', desc:'Identify latest usable backup/snapshot; confirm point-in-time available and data integrity.'}
  ],
- decision:'Is the failed component redundant/hot-swappable without downtime?',
+ decision:'Is the latest recovery point valid, complete, and safe to restore from?',
  resolve:[
-   {label:'Hot-Swap Replacement', desc:'Coordinate a hot-swap with the vendor/on-site team.'},
-   {label:'Confirm Rebuild / Failover', desc:'Confirm the rebuild/failover completes cleanly and clear the alert.'}
+   {label:'Confirm Scope', desc:'Define restore scope (full server, specific folders, specific timestamp); plan restore location.'},
+   {label:'Execute Restore', desc:'Perform restore to test/staging environment first if possible; monitor restore progress.'},
+   {label:'Validate Recovery', desc:'Confirm server boots; test critical applications; verify data availability and integrity.'},
+   {label:'Reconcile Data', desc:'Compare restored data with live copies; identify any gaps; verify log completeness.'},
+   {label:'Communication', desc:'Notify stakeholders of recovery completion; document any data limitations or losses.'}
  ],
  escalate:[
-   {label:'Schedule Maintenance Window', desc:'Schedule a maintenance window for the non-redundant component.'},
-   {label:'Evacuate / Migrate Workloads', desc:'Move active VMs off the affected host before the window.'},
-   {label:'Vendor Replaces Component', desc:'Vendor dispatches and replaces the part; confirm system health afterward.'}
+   {label:'Recovery Point Invalid', desc:'If all recovery points compromised/invalid, escalate to DR Coordinator for options.'},
+   {label:'Data Loss Imminent', desc:'If unrecoverable data loss identified, escalate to management and prepare stakeholder communication.'}
  ]},
 
-{id:'ip-issue', title:'IP Issue', sev:'P3', sla:'2h SLA', trigger:'User Request / Monitoring Alert',
- scope:'IP conflict, incorrect assignment, or a DHCP/DNS mismatch causing connectivity problems.',
+// ===== SERVER AVAILABILITY (1 scenario) =====
+
+{id:'server-down', title:'[P1] Server Down - Host Unreachable - INC000106', difficulty:'intermediate',
+ sev:'P1', sla:'2h SLA', trigger:'Monitoring Alert',
+ scope:'Production web server is unreachable and monitoring reports the host as down.',
+ ticket:'INC000106', client:'Client F', team:'Windows Operations', category:'Server Availability', status:'Resolved',
  pre:[
-   {label:'Log & Correlate', desc:'Confirm the exact symptom — conflict alert, host unreachable, wrong subnet.'},
-   {label:'Scope the Fault', desc:'Check current config, DHCP lease/reservation, DNS record, and gateway.'}
+   {label:'Declare & Classify', desc:'Confirmed unreachable — declared P1, SLA clock starts. Customer-facing production service is down.'},
+   {label:'Blast-Radius Assessment', desc:'Identify dependent services and users affected; check whether other hosts on the same cluster or subnet are impacted.'}
  ],
- decision:'Is this a DHCP/config-side fix — lease conflict, wrong reservation, stale DNS?',
+ decision:'Does the host respond on the hypervisor or out-of-band console, or is this a platform-level failure?',
  resolve:[
-   {label:'Apply Fix', desc:'Release/renew the lease or correct the reservation; update/flush DNS.'},
-   {label:'Retest Connectivity', desc:'Confirm the host reaches the network end-to-end and monitoring clears.'}
+   {label:'Validate the Alert', desc:'Confirm the outage independently — ping, traceroute and port checks from more than one source before acting.'},
+   {label:'Check Host & VM State', desc:'Inspect power state and health on the hypervisor or out-of-band console (iLO/iDRAC); check the switch port.'},
+   {label:'Review Recent Changes', desc:'Check for patching, deployments or configuration changes that coincide with the outage window.'},
+   {label:'Restore via Approved Path', desc:'Restart or recover the guest using the approved recovery procedure; do not force a power action without authorisation.'},
+   {label:'Validate & Monitor', desc:'Confirm the application responds end to end, watch for 15+ minutes for recurrence, and update the ticket.'}
  ],
  escalate:[
-   {label:'Escalate to Specialist Team', desc:'Escalate to Network — likely a VLAN, subnet, or switch-port issue.'}
+   {label:'Platform Escalation', desc:'Engage the virtualisation or platform team if the host itself is down or the guest will not start.'},
+   {label:'Major Incident', desc:'Raise a major incident and notify stakeholders if multiple production services are affected or recovery exceeds SLA.'}
  ]},
 
-{id:'battery-issue', title:'Battery Issue', sev:'P3', sla:'24h SLA', trigger:'Monitoring Alert',
- scope:'A UPS battery or RAID controller cache battery (BBU) fault alert.',
+// ===== NETWORK (2 scenarios) =====
+
+{id:'ip-issue', title:'[P1] Network / IP - Address Conflict - INC000113', difficulty:'intermediate',
+ sev:'P1', sla:'2h SLA', trigger:'Monitoring Alert / User Request',
+ scope:'Server has an IP address conflict and intermittently loses network connectivity.',
+ ticket:'INC000113', client:'Client M', team:'Network Operations', category:'Network / IP', status:'Resolved',
  pre:[
-   {label:'Acknowledge Hardware Alert', desc:'Alert acknowledged in monitoring; priority set to P3.'},
-   {label:'Redundancy Check', desc:'Identify battery type, check age/warranty and current charge health.'}
+   {label:'Log & Correlate', desc:'Confirm exact symptom: conflict alert, host unreachable, DNS failures, or intermittent connectivity loss.'},
+   {label:'Scope the Fault', desc:'Check current config (static/DHCP); review DHCP leases/reservations; check DNS records and gateway.'}
  ],
- decision:'Is a replacement available and the risk currently non-critical?',
+ decision:'Is this a DHCP/config-side fix (lease conflict, wrong reservation, stale DNS) or deeper network issue?',
  resolve:[
-   {label:'Hot-Swap Replacement', desc:'Schedule the replacement for the next maintenance window.'},
-   {label:'Confirm Rebuild / Failover', desc:'Monitor for performance impact until the replacement lands.'}
+   {label:'Identify Conflict', desc:'Confirm duplicate IP address exists; identify which host owns the conflicting IP.'},
+   {label:'Fix Allocation', desc:'Release DHCP lease (if dynamic); assign unique static/DHCP IP; update DNS A records.'},
+   {label:'Update DNS', desc:'Flush stale DNS records from cache; update/verify DNS entries point to correct IP.'},
+   {label:'Test Connectivity', desc:'Retest ping/connectivity; verify routing; confirm monitoring alert clears.'}
  ],
  escalate:[
-   {label:'Schedule Maintenance Window', desc:'Re-prioritize as P1 if UPS runtime is critical; schedule an urgent window.'},
-   {label:'Evacuate / Migrate Workloads', desc:'Shift critical load off the affected path ahead of the swap.'},
-   {label:'Vendor Replaces Component', desc:'Facilities/vendor perform an urgent replacement; confirm system health.'}
+   {label:'Network Issue', desc:'If not a simple config fix, escalate to Network Operations for deeper investigation.'},
+   {label:'VLAN/Routing', desc:'If VLAN/subnet/routing issue, escalate to Network team for infrastructure changes.'}
  ]},
 
-{id:'patching', title:'Patching', sev:'P3', sla:'Per patch window', trigger:'Scheduled Change',
- scope:'Scheduled OS/security patch deployment via WSUS/SCCM, or an emergency out-of-band patch.',
+{id:'firewall-port', title:'[P1] Network / Port - Firewall Blocking - INC000118', difficulty:'intermediate',
+ sev:'P1', sla:'3h SLA', trigger:'Incident / User Report',
+ scope:'Application server cannot reach the database because the required network port is blocked.',
+ ticket:'INC000118', client:'Client R', team:'Network Security', category:'Network / Port', status:'In Progress',
  pre:[
-   {label:'Verify CR & Scope', desc:'Confirm the patch window/CR and the target patch group.'},
-   {label:'Readiness Checks', desc:'Verify a backup has been taken, check free space and pending reboots.'}
+   {label:'Validate Connectivity', desc:'Confirm source, destination, protocol, and port of blocked traffic; verify business need.'},
+   {label:'Gather Evidence', desc:'Collect traceroute output; review firewall logs; confirm port is actually blocked.'}
  ],
- decision:'Did pre-checks pass — space OK, backup taken, no conflicting maintenance?',
+ decision:'Is this a firewall rule issue requiring security team update?',
  resolve:[
-   {label:'Execute Change', desc:'Deploy patches, monitor install, reboot within the approved window.'},
-   {label:'Post-Change Validation', desc:'Validate services, update the compliance record, and close.'}
+   {label:'Verify Requirement', desc:'Confirm the port is necessary for business function; validate from stakeholder.'},
+   {label:'Gather Firewall Evidence', desc:'Collect firewall logs confirming block; identify specific rule rejecting traffic.'},
+   {label:'Obtain Approval', desc:'Get Network Security team approval for rule change; document business justification.'},
+   {label:'Update Firewall', desc:'Have security team add/update firewall rule to allow required traffic.'},
+   {label:'Test End-to-End', desc:'Verify traffic now flows; confirm application connectivity restored; monitor for issues.'}
  ],
  escalate:[
-   {label:'Hold & Reschedule', desc:'Resolve the blocker and reschedule; escalate if the approved window is at risk.'}
+   {label:'Security Policy Review', desc:'If port change conflicts with security policy, escalate to security team for exception review.'},
+   {label:'Approval Blocked', desc:'If approval authority not responding, escalate to management for decision.'}
  ]},
 
-{id:'rdp-issue', title:'RDP Issue — Add Users to RDP Group', sev:'P4', sla:'1h SLA', trigger:'User Request',
- scope:'User cannot RDP into a server — most often missing from the Remote Desktop group.',
+// ===== HARDWARE (2 scenarios) =====
+
+{id:'hw-host', title:'[P1] Hardware Host Issue - INC000114', difficulty:'advanced',
+ sev:'P1', sla:'5h SLA', trigger:'Monitoring Alert',
+ scope:'Virtualization host reports a hardware fault and two guest servers are at risk.',
+ ticket:'INC000114', client:'Client N', team:'Compute & Hardware', category:'Hardware / Virtualization', status:'Vendor Engaged',
  pre:[
-   {label:'Verify Requester Identity', desc:'Confirm the ticket includes approval for RDP access to this specific server.'},
-   {label:'Check Access State', desc:'Check group membership, confirm RDP service and firewall/NLA settings.'}
+   {label:'Acknowledge Alert', desc:'Alert acknowledged in monitoring; priority set to P1; declare critical incident.'},
+   {label:'Redundancy Check', desc:'Identify the failed component type; check redundancy (RAID, PSU, NIC teaming, cluster HA).'}
  ],
- decision:'Is RDP enabled on the server, with only group membership missing?',
+ decision:'Is the failed component redundant or hot-swappable without downtime?',
  resolve:[
-   {label:'Grant / Modify Access', desc:'Add the user to the local "Remote Desktop Users" group (or AD group).'},
-   {label:'Confirm With User', desc:'Have the user retest the connection and confirm; close the ticket.'}
+   {label:'Redundant Path', desc:'Hot-swap the failed component (PSU, SSD, NIC) with vendor support if needed.'},
+   {label:'Verify Rebuild', desc:'Confirm RAID rebuild completes cleanly; cluster failover succeeds; no data loss.'},
+   {label:'Validate Stability', desc:'Monitor host for 30+ minutes; confirm no performance degradation; VMs running normally.'}
  ],
  escalate:[
-   {label:'Return / Escalate', desc:'Troubleshoot the RDP service/firewall, or escalate to the Server Team.'}
+   {label:'Non-Redundant', desc:'Schedule maintenance window for non-redundant component replacement.'},
+   {label:'Workload Evacuation', desc:'Migrate critical VMs off affected host before maintenance window begins.'},
+   {label:'Vendor Engagement', desc:'Engage vendor/on-site support for replacement; coordinate logistics and timing.'}
  ]},
 
-{id:'alert', title:'Alert Triage', sev:'P3', sla:'1h to triage', trigger:'Monitoring Alert',
- scope:'A generic monitoring alert has fired — often the entry point into another runbook.',
+{id:'battery-issue', title:'[P2] Hardware / Power - Battery Issue - INC000117', difficulty:'intermediate',
+ sev:'P2', sla:'4h SLA', trigger:'Monitoring Alert',
+ scope:'UPS battery health is critical for a network rack and runtime is below the accepted threshold.',
+ ticket:'INC000117', client:'Client Q', team:'Data Center Operations', category:'Hardware / Power', status:'Vendor Engaged',
  pre:[
-   {label:'Correlate & Assess', desc:'Identify the alert type, check for a known false-positive, correlate against changes.'}
+   {label:'Acknowledge Alert', desc:'Battery health alert acknowledged in monitoring; priority set to P3.'},
+   {label:'Assess Redundancy', desc:'Identify battery age, warranty status, current health metrics, and runtime remaining.'}
  ],
- decision:'Does the alert map cleanly to a known runbook (disk, CPU, server down, etc.)?',
+ decision:'Is a replacement battery available and is risk currently non-critical?',
  resolve:[
-   {label:'Acknowledge & Route', desc:'Acknowledge the alert and route directly into the matching runbook.'}
+   {label:'Schedule Replacement', desc:'Plan replacement in agreed maintenance window with facilities and vendor.'},
+   {label:'Engage Vendor', desc:'Contact vendor/on-site team; confirm battery availability and installation timing.'},
+   {label:'Communicate Window', desc:'Notify infrastructure users of planned maintenance; confirm no conflicts.'},
+   {label:'Monitor Performance', desc:'Track battery performance and runtime until replacement completes successfully.'}
  ],
  escalate:[
-   {label:'First-Level Diagnosis', desc:'Perform first-level diagnosis and document findings.'},
-   {label:'Escalate to L2 / Owner', desc:'Hand off to L2 or the relevant system owner if it remains unresolved.'}
+   {label:'Critical Risk', desc:'Re-prioritize as P1 if UPS runtime drops below minimum acceptable threshold for critical systems.'},
+   {label:'Urgent Replacement', desc:'Schedule emergency/immediate replacement if current runtime insufficient for safety.'}
+ ]},
+
+// ===== CONFIGURATION & CHANGE MANAGEMENT (1 scenario) =====
+
+{id:'config-policy', title:'[P3] Configuration / Policy Update - INC000107', difficulty:'intermediate',
+ sev:'P3', sla:'4h SLA', trigger:'Change Request',
+ scope:'Apply an approved security policy update to the server group after a compliance review.',
+ ticket:'INC000107', client:'Client G', team:'Windows Operations', category:'Configuration / Policy', status:'Scheduled',
+ pre:[
+   {label:'Verify Approval', desc:'Confirm change request is authorized, documented, and in approved change window.'},
+   {label:'Scope Verification', desc:'Identify target server group; confirm scope is accurate; create configuration backup.'}
+ ],
+ decision:'Is the policy deployment tool available and the change window confirmed?',
+ resolve:[
+   {label:'Backup Settings', desc:'Back up current configuration from all target servers before any changes.'},
+   {label:'Deploy Policy', desc:'Apply policy through approved tool (GPO, Ansible, Puppet, etc.) to server group.'},
+   {label:'Validate Apps', desc:'Test affected applications for compatibility and functionality post-deployment.'},
+   {label:'Document Change', desc:'Record deployment details, any exceptions from policy, and validation results.'}
+ ],
+ escalate:[
+   {label:'Compatibility Failure', desc:'If application incompatibility found, escalate to application owner for mitigation.'},
+   {label:'Rollback Plan', desc:'Prepare rollback procedure; be ready to restore from backup if issues surface.'}
+ ]},
+
+// ===== PATCHING (1 scenario) =====
+
+{id:'patching', title:'[P3] Patching - Security Updates - INC000108', difficulty:'intermediate',
+ sev:'P3', sla:'6h SLA', trigger:'Scheduled Change',
+ scope:'Install approved monthly security patches on production application servers.',
+ ticket:'INC000108', client:'Client H', team:'Patch Management', category:'Patching', status:'Scheduled',
+ pre:[
+   {label:'Verify CR & Scope', desc:'Confirm patch window/CR is approved; identify target patch group; review patch notes.'},
+   {label:'Readiness Checks', desc:'Verify backup exists and is usable; check free disk space; confirm no pending reboots.'}
+ ],
+ decision:'Did pre-checks pass - space OK, backup taken, no pending actions?',
+ resolve:[
+   {label:'Execute Change', desc:'Deploy patches in batches (test, staging, production); monitor install progress.'},
+   {label:'Coordinate Reboot', desc:'Perform controlled reboot within approved maintenance window; monitor boot process.'},
+   {label:'Validate Services', desc:'Confirm all services return to normal post-reboot; test critical applications.'},
+   {label:'Update Compliance', desc:'Record patch compliance in audit system; close the change request formally.'}
+ ],
+ escalate:[
+   {label:'Pre-Check Failures', desc:'If blockers found during pre-checks, resolve and reschedule patching.'},
+   {label:'Installation Failure', desc:'If patch installation fails, investigate root cause and prepare rollback if needed.'}
+ ]},
+
+// ===== SERVER LIFECYCLE (2 scenarios) =====
+
+{id:'server-build', title:'[P3] Server Lifecycle - Build New Server - INC000109', difficulty:'advanced',
+ sev:'P3', sla:'8h SLA', trigger:'Change Request',
+ scope:'Build a new Windows server using the approved production baseline.',
+ ticket:'INC000109', client:'Client I', team:'Windows Engineering', category:'Server Lifecycle', status:'In Progress',
+ pre:[
+   {label:'Verify CR', desc:'Confirm change request with capacity and business approvals documented.'},
+   {label:'Prepare Specs', desc:'Confirm compute, storage, network requirements; reserve IP addresses; prepare DNS records.'}
+ ],
+ decision:'Are all infrastructure prerequisites ready and baseline image current?',
+ resolve:[
+   {label:'Provision Resources', desc:'Allocate compute/vCPU, storage/disk, network (vLAN, IP address) resources.'},
+   {label:'Deploy Baseline', desc:'Apply approved OS image and baseline configuration; join to domain.'},
+   {label:'Configure Services', desc:'Install monitoring agents; configure backup; apply local/domain policies.'},
+   {label:'Security & Patches', desc:'Apply latest security patches; configure firewall rules per application requirements.'},
+   {label:'Validation', desc:'Run validation suite; confirm services operational; hand over to requesting team.'}
+ ],
+ escalate:[
+   {label:'Resource Unavailable', desc:'If infrastructure capacity unavailable, escalate to Infrastructure team for prioritization.'},
+   {label:'Build Failure', desc:'Troubleshoot deployment issues; escalate for specialist support if unresolvable.'}
+ ]},
+
+{id:'server-decomm', title:'[P4] Server Lifecycle - Decommission - INC000110', difficulty:'intermediate',
+ sev:'P4', sla:'6h SLA', trigger:'Change Request',
+ scope:'Decommission a retired application server after business and data-owner approval.',
+ ticket:'INC000110', client:'Client J', team:'Windows Engineering', category:'Server Lifecycle', status:'Pending Approval',
+ pre:[
+   {label:'Confirm Approvals', desc:'Verify business owner and data owner approvals are documented and complete.'},
+   {label:'Assess Dependencies', desc:'Confirm no active services or dependencies on this server; check for hidden integrations.'}
+ ],
+ decision:'Have all data retention and archival requirements been met and verified?',
+ resolve:[
+   {label:'Archive Data', desc:'Back up and archive required data per compliance/retention policies.'},
+   {label:'Remove Integrations', desc:'Remove from monitoring systems, backup jobs, load balancers, DNS records.'},
+   {label:'Revoke Access', desc:'Disable account in Active Directory; remove from all groups; revoke service credentials.'},
+   {label:'Update Inventory', desc:'Update CMDB/asset inventory; remove from documentation; archive configuration.'},
+   {label:'Physical Decomm', desc:'Power down; remove from racks; dispose of securely per compliance requirements.'}
+ ],
+ escalate:[
+   {label:'Data Concerns', desc:'If data archival requirements unclear, escalate to data owner for clarification.'},
+   {label:'Compliance Review', desc:'For regulated/sensitive systems, ensure compliance team approves decommission procedure.'}
+ ]},
+
+// ===== DATA CENTER (1 scenario) =====
+
+{id:'datacenter-env', title:'[P1] Data Center - Environmental Alert - INC000116', difficulty:'advanced',
+ sev:'P1', sla:'4h SLA', trigger:'Monitoring Alert',
+ scope:'Data-center cooling alert indicates rising temperature in the rack hosting production infrastructure.',
+ ticket:'INC000116', client:'Client P', team:'Data Center Operations', category:'Data Center', status:'In Progress',
+ pre:[
+   {label:'Verify Alert', desc:'Confirm temperature sensors are accurate and not faulty; check multiple sensors.'},
+   {label:'Assess Systems', desc:'Identify all production systems in affected rack; assess thermal sensitivity.'}
+ ],
+ decision:'Is immediate load reduction or workload migration needed to prevent system damage?',
+ resolve:[
+   {label:'Escalate Immediately', desc:'Contact data center facilities team immediately; provide alert details and timestamp.'},
+   {label:'Monitor Temperature', desc:'Continuously monitor rack temperature and all thermal sensors in affected area.'},
+   {label:'Reduce Load', desc:'If temperature continuing to rise, reduce workload or migrate non-critical systems.'},
+   {label:'Prepare Migration', desc:'If critical systems threatened, prepare emergency workload migration to alternative racks.'},
+   {label:'Track Restoration', desc:'Monitor cooling system restoration progress with facilities team; confirm temperature normalization.'}
+ ],
+ escalate:[
+   {label:'Emergency Migration', desc:'If cooling restoration delayed, execute emergency workload migration to preserve service.'},
+   {label:'Critical Impact', desc:'If critical systems threatened, declare incident bridge for continuous communication.'}
+ ]},
+
+// ===== MONITORING & ALERT TRIAGE (1 scenario) =====
+
+{id:'alert', title:'[P4] Alert Triage / Routing - INC000115', difficulty:'beginner',
+ sev:'P4', sla:'1h SLA', trigger:'Monitoring Alert',
+ scope:'Monitoring generated a warning for a non-critical service that recovered automatically.',
+ ticket:'INC000115', client:'Client O', team:'Monitoring Team', category:'Monitoring Alert', status:'Resolved',
+ pre:[
+   {label:'Correlate Alert', desc:'Identify alert type and category; check for known false-positives in alert library.'},
+   {label:'Assess Correlation', desc:'Compare against recent changes; look for related alerts; review system logs.'}
+ ],
+ decision:'Does this alert map cleanly to a known runbook/scenario?',
+ resolve:[
+   {label:'Acknowledge', desc:'Acknowledge alert in monitoring system to clear initial notification.'},
+   {label:'Route to Runbook', desc:'Map to appropriate runbook (Disk, CPU, Network, etc.) based on alert type.'},
+   {label:'Track & Document', desc:'Update ticket with routing information and alert history for future reference.'}
+ ],
+ escalate:[
+   {label:'First-Level Diagnosis', desc:'If alert doesn\'t map to known runbook, perform initial diagnosis and documentation.'},
+   {label:'Escalate to L2', desc:'Hand off to L2/specialist team or system owner if root cause unclear or unresolved.'}
+ ]},
+
+// ===== REMOTE ACCESS (1 scenario) =====
+
+{id:'rdp-issue', title:'[P2] Remote Access - RDP Issue - INC000119', difficulty:'beginner',
+ sev:'P2', sla:'1h SLA', trigger:'User Request',
+ scope:'Approved support engineer cannot connect to a server through RDP.',
+ ticket:'INC000119', client:'Client S', team:'Windows Operations', category:'Remote Access', status:'Resolved',
+ pre:[
+   {label:'Verify Authorization', desc:'Confirm user has approved RDP access to the specific server; check access request.'},
+   {label:'Check Access State', desc:'Verify RDP service is running on target server; check user group memberships.'}
+ ],
+ decision:'Is RDP enabled on the server with only group membership missing?',
+ resolve:[
+   {label:'Verify Identity', desc:'Confirm user identity and validate access approval is current.'},
+   {label:'Check Membership', desc:'Verify user is NOT currently in "Remote Desktop Users" group (local or domain).'},
+   {label:'Add to Group', desc:'Add user to "Remote Desktop Users" group (local or AD forest depending on setup).'},
+   {label:'Refresh Policy', desc:'If needed, refresh group policy on user and target server (gpupdate /force).'},
+   {label:'Test Connection', desc:'Have user retest RDP connection; confirm successful login to remote server.'}
+ ],
+ escalate:[
+   {label:'RDP Disabled', desc:'If RDP service is disabled on server, escalate to server team for enablement.'},
+   {label:'Firewall Blocking', desc:'If firewall is blocking RDP (port 3389), escalate to Network team for rule update.'},
+   {label:'Service Failures', desc:'If connection still fails after group membership fix, troubleshoot RDP service health.'}
  ]}
+
 ];
 
 const PROBLEMS = RAW_PROBLEMS.map(p=>{
@@ -1184,6 +1751,15 @@ function makeSlot(key, kind, correctId, placeholder){
   return s;
 }
 
+/* The second branch is not always an escalation. A ticket sitting at
+   "Vendor Engaged" is a hand-off you hold open; one at "Pending Approval"
+   is a wait state. Labelling it correctly is part of what L1 needs to learn. */
+function branchLabel(status){
+  if(status === 'Vendor Engaged')   return '🤝 Vendor Hand-off Path';
+  if(status === 'Pending Approval') return '⏸ Approval Hold Path';
+  return '↑ Escalate Path';
+}
+
 function loadProblem(id){
   current = PROBLEMS.find(p=>p.id===id);
   submitted = false;
@@ -1203,6 +1779,12 @@ function loadProblem(id){
   sevTag.className = 'tag sev' + (current.sev==='P1' ? ' sev-p1' : current.sev==='P2' ? ' sev-p2' : '');
   document.getElementById('probSla').textContent = current.sla;
   document.getElementById('probTrig').textContent = current.trigger;
+  const tkt = document.getElementById('probTicket');
+  tkt.textContent = current.ticket ? `${current.ticket} · ${current.client}` : '';
+  tkt.style.display = current.ticket ? '' : 'none';
+  const stt = document.getElementById('probStatus');
+  stt.textContent = current.status ? `Status: ${current.status}` : '';
+  stt.style.display = current.status ? '' : 'none';
 
   const host = document.getElementById('flowSkeleton');
   host.innerHTML = '';
@@ -1211,7 +1793,7 @@ function loadProblem(id){
 
   current.pre.forEach((c,i)=>{
     const s = makeSlot(`pre${i}`, 'pre', c.id, `Step ${i+1} — awaiting placement`);
-    slots.push({key:s.dataset.slotKey, correctId:c.id, el:s});
+    slots.push({key:s.dataset.slotKey, correctId:c.id, el:s, kind:'pre'});
     host.appendChild(s);
     if(i < current.pre.length-1) host.appendChild(arrowDown());
   });
@@ -1223,14 +1805,14 @@ function loadProblem(id){
   rCol.appendChild(el('div','branch-head resolve','✓ Resolve Path'));
   current.resolve.forEach((c,i)=>{
     const s = makeSlot(`resolve${i}`, 'resolve', c.id, `Resolve step ${i+1}`);
-    slots.push({key:s.dataset.slotKey, correctId:c.id, el:s});
+    slots.push({key:s.dataset.slotKey, correctId:c.id, el:s, kind:'resolve'});
     rCol.appendChild(s);
   });
   const eCol = el('div','branch-col escalate-col');
-  eCol.appendChild(el('div','branch-head escalate','↑ Escalate Path'));
+  eCol.appendChild(el('div','branch-head escalate', branchLabel(current.status)));
   current.escalate.forEach((c,i)=>{
-    const s = makeSlot(`escalate${i}`, 'escalate', c.id, `Escalate step ${i+1}`);
-    slots.push({key:s.dataset.slotKey, correctId:c.id, el:s});
+    const s = makeSlot(`escalate${i}`, 'escalate', c.id, `Branch step ${i+1} — order not graded`);
+    slots.push({key:s.dataset.slotKey, correctId:c.id, el:s, kind:'escalate'});
     eCol.appendChild(s);
   });
   branches.appendChild(rCol);
@@ -1261,11 +1843,27 @@ async function submitSolution(){
   document.getElementById('submitBtn').disabled = true;
   document.querySelectorAll('.card').forEach(c=>{ c.draggable = false; c.classList.add('locked'); });
 
+  /* Pre and Resolve steps are graded strictly on order — sequence is the whole
+     point there. Steps in the escalate / vendor / approval branch are genuinely
+     order-independent in practice, so they are graded as a set: the right cards
+     in the branch, in any order, counts as correct. */
+  const escSlots    = slots.filter(s => s.kind === 'escalate');
+  const escExpected = new Set(escSlots.map(s => s.correctId));
+  const escPlaced   = escSlots.map(s => {
+    const c = s.el.querySelector('.card');
+    return c ? c.dataset.cardId : null;
+  });
+  const escPlacedSet = new Set(escPlaced.filter(Boolean));
+  const escAllPresent = escExpected.size === escPlacedSet.size &&
+                        [...escExpected].every(id => escPlacedSet.has(id));
+
   let correctCount = 0;
   slots.forEach(s=>{
     const placedEl = s.el.querySelector('.card');
     const placedId = placedEl ? placedEl.dataset.cardId : null;
-    const isRight = placedId === s.correctId;
+    const isRight = (s.kind === 'escalate')
+      ? (escAllPresent && !!placedId && escExpected.has(placedId))
+      : (placedId === s.correctId);
     s.el.classList.remove('hover');
     s.el.classList.add(isRight ? 'correct' : 'incorrect');
     if(isRight) correctCount++;
@@ -1336,7 +1934,7 @@ function renderAnswerKey(){
   rCol.appendChild(el('div','branch-head resolve','✓ Resolve Path'));
   current.resolve.forEach(c=> rCol.appendChild(buildCardEl(c,{readonly:true})));
   const eCol = el('div','branch-col escalate-col');
-  eCol.appendChild(el('div','branch-head escalate','↑ Escalate Path'));
+  eCol.appendChild(el('div','branch-head escalate', branchLabel(current.status)));
   current.escalate.forEach(c=> eCol.appendChild(buildCardEl(c,{readonly:true})));
   branches.appendChild(rCol); branches.appendChild(eCol);
   body.appendChild(branches);
@@ -1347,19 +1945,16 @@ function renderAnswerKey(){
 /* ---- persistence of participant attempts ---- */
 async function recordAttempt(scenario, correctCount, total, allCorrect){
   if(!session || session.role !== 'participant') return;
-  const data = await loadData();
-  const key = session.key;
-  if(!data.attempts[key]) data.attempts[key] = [];
-  data.attempts[key].push({
+  const ok = await Store.appendAttempt(session.key, {
     ts: Date.now(),
     scenarioId: scenario.id,
     scenarioTitle: scenario.title,
+    ticket: scenario.ticket || null,
     sev: scenario.sev,
     correctCount, total,
     accuracy: Math.round((correctCount/total)*100),
     allCorrect
   });
-  const ok = await saveData(data);
   if(!ok) showToast('Could not save your score — check your connection');
   await refreshParticipantStats();
 }
@@ -1368,8 +1963,7 @@ async function refreshParticipantStats(){
   const statRow = document.getElementById('participantStatRow');
   const historyWrap = document.getElementById('historyWrap');
   if(!session) return;
-  const data = await loadData();
-  const arr = (data.attempts[session.key] || []).slice().sort((a,b)=>a.ts-b.ts);
+  const arr = (await Store.getAttempts(session.key)).slice().sort((a,b)=>a.ts-b.ts);
   const attempts = arr.length;
   const solved = arr.filter(a=>a.allCorrect).length;
   const acc = attempts ? Math.round(solved/attempts*100) : null;
@@ -1381,7 +1975,7 @@ async function refreshParticipantStats(){
 
   historyWrap.innerHTML = '';
   if(arr.length === 0){
-    historyWrap.appendChild(el('div','empty-note','No demo attempts yet — pick a scenario below to get started.'));
+    historyWrap.appendChild(el('div','empty-note','No attempts yet — pick a scenario below to get started.'));
     return;
   }
   const list = el('div','history-list');
@@ -1418,18 +2012,10 @@ document.getElementById('nextBtn').addEventListener('click', ()=>{
 /* ================================================================
    INIT
    ================================================================ */
-async function seedDemoParticipant(){
-  try{
-    const data = await loadData();
-    if(Object.keys(data.participants).length === 0){
-      data.participants['test user'] = {name:'Test User', pin:'1234', createdAt: Date.now(), createdBy:'seed'};
-      data.attempts['test user'] = data.attempts['test user'] || [];
-      await saveData(data);
-    }
-  }catch(e){ /* ignore — falls back to employee-created logins */ }
-}
+/* v1 seeded a hardcoded "Test User" / PIN 1234 account that let anyone in
+   without an instructor. Removed — every login is now instructor-issued. */
 showScreen('login');
-seedDemoParticipant();
+renderStorageBanner();
 </script>
 </body>
 </html>

@@ -177,6 +177,8 @@
   /* ---- INCIDENT: escalation ladder ---- */
   .ladder-wrap{display:grid; grid-template-columns:10px 1fr 1fr; gap:18px; align-items:start; margin-top:6px;}
   .ladder-rail{align-self:stretch; border-radius:4px; background:linear-gradient(to top, #FEE2E2, var(--red)); min-height:100%;}
+  .fh-tags .tag.tkt{background:#E0F2FE; color:#0369A1; border-color:#E0F2FE;}
+  .fh-tags .tag.stat{background:#F3EEFF; color:#6D28D9; border-color:#F3EEFF;}
   .sev-badge{display:inline-block; font-family:var(--mono); font-size:8.5px; font-weight:700; letter-spacing:.06em; padding:2px 6px; border-radius:3px; background:var(--red-dim); color:var(--red); margin-bottom:6px;}
   .summit{border:1px solid #F5CB7D !important; background:#FFFBEB;}
   .summit .n-lane{background:#FDE9B8 !important; color:#92400E !important;}
@@ -255,11 +257,11 @@ const TEMPLATE_META = {
 };
 
 const ISSUES = [
-{id:'disk-util', cat:'resources', title:'Disk Utilization Issue', sev:'P3', sla:'4h SLA', template:'diagnostic',
+{id:'disk-util', cat:'resources', title:'Disk Utilization Issue', sev:'P1', sla:'3h SLA', template:'diagnostic', ticket:'INC000101', client:'Client A', status:'Resolved',
  trigger:'Monitoring Alert', owner:'Storage / Infra Team',
  scope:'Monitoring alert or user report that a volume/partition has crossed the utilization threshold (typically 85%).',
  pre:[
-   {title:'Log &amp; Classify', body:'Ticket logged, priority set to <code>P3</code>, SLA clock starts.'},
+   {title:'Log &amp; Classify', body:'Ticket logged, priority set to <code>P1</code>, SLA clock starts.'},
    {title:'Initial Diagnosis', checklist:true, checks:['Confirm the host and mount point that triggered the alert.','Verify current usage — <code>df -h</code> or Disk Management.','Identify top consumers — <code>du -sh /*</code> or WinDirStat/TreeSize.','Check known heavy folders: logs, temp/cache, core dumps, old backups.']}
  ],
  decision:'Can space be reclaimed by cleanup without impacting the application?',
@@ -272,11 +274,11 @@ const ISSUES = [
    {title:'Track to Resolution', laneLabel:'L1 · Service Desk', body:'L1 monitors the change/escalation through to completion and updates the requester.'}
  ]},
 
-{id:'cpu-util', cat:'resources', title:'CPU Utilization Issue', sev:'P3', sla:'4h SLA', template:'diagnostic',
+{id:'cpu-util', cat:'resources', title:'CPU Utilization Issue', sev:'P1', sla:'4h SLA', template:'diagnostic', ticket:'INC000102', client:'Client B', status:'In Progress',
  trigger:'Monitoring Alert', owner:'Infra / App Owner',
  scope:'Alert or report of sustained high CPU (e.g. above 90% for 15+ minutes) on a server.',
  pre:[
-   {title:'Log &amp; Classify', body:'Ticket logged, priority set to <code>P3</code>, SLA clock starts.'},
+   {title:'Log &amp; Classify', body:'Ticket logged, priority set to <code>P1</code>, SLA clock starts.'},
    {title:'Initial Diagnosis', checklist:true, checks:['Confirm the affected host and that the alert is still active.','Find the top consuming process — <code>top</code>/<code>htop</code> or Task Manager.','Check the trend — sudden spike vs. slow sustained climb.','Check for recent deployments or scheduled jobs at the same time.']}
  ],
  decision:'Is there a single identifiable process or job causing the spike?',
@@ -289,7 +291,7 @@ const ISSUES = [
    {title:'Track to Resolution', laneLabel:'L1 · Service Desk', body:'L1 tracks the resize/review through to completion and updates the requester.'}
  ]},
 
-{id:'disk-increase', cat:'resources', title:'Disk Size Increase', sev:'P3', sla:'8h SLA', template:'change',
+{id:'disk-increase', cat:'resources', title:'Disk Size Increase', sev:'P2', sla:'2h SLA', template:'change', ticket:'INC000111', client:'Client K', status:'Resolved',
  trigger:'Change Request', owner:'Storage Team',
  scope:'Approved request (often following a disk utilization ticket) to expand a volume or partition.',
  pre:[
@@ -305,7 +307,7 @@ const ISSUES = [
    {title:'Hold &amp; Reschedule', laneLabel:'Storage Team', body:'Escalate to Storage for capacity procurement/reallocation; suggest cleanup as an interim step, then reschedule the change.'}
  ]},
 
-{id:'pwd-expiry', cat:'access', title:'User Password Expiry', sev:'P4', sla:'2h SLA', template:'access',
+{id:'pwd-expiry', cat:'access', title:'User Password Expiry', sev:'P2', sla:'30m SLA', template:'access', ticket:'INC000103', client:'Client C', status:'Resolved',
  trigger:'User Request', owner:'IAM Team',
  scope:'User is locked out or notified that their domain/AD password has expired.',
  pre:[
@@ -321,7 +323,7 @@ const ISSUES = [
    {title:'Return / Escalate', laneLabel:'IAM Team', body:'Perform an admin reset via AD/PowerShell, share the temp password securely, and escalate to IAM for restricted/service accounts.'}
  ]},
 
-{id:'user-creation', cat:'access', title:'User Creation', sev:'P4', sla:'8h SLA', template:'access',
+{id:'user-creation', cat:'access', title:'User Creation', sev:'P4', sla:'2h SLA', template:'access', ticket:'INC000104', client:'Client D', status:'Pending Approval',
  trigger:'HR / Manager Request', owner:'Requester / CAB',
  scope:'Request to create a new user or service account, typically with manager/HR approval.',
  pre:[
@@ -337,7 +339,7 @@ const ISSUES = [
    {title:'Return / Escalate', laneLabel:'Requester / CAB', body:'Return the ticket to the requester for the missing approval/detail and place it on hold.'}
  ]},
 
-{id:'rdp-issue', cat:'access', title:'RDP Issue — Add Users to RDP Group', sev:'P4', sla:'1h SLA', template:'access',
+{id:'rdp-issue', cat:'access', title:'RDP Issue — Add Users to RDP Group', sev:'P2', sla:'1h SLA', template:'access', ticket:'INC000119', client:'Client S', status:'Resolved',
  trigger:'User Request', owner:'Server Team',
  scope:'User cannot RDP into a server — most often missing from the Remote Desktop group.',
  pre:[
@@ -353,7 +355,7 @@ const ISSUES = [
    {title:'Return / Escalate', laneLabel:'Server Team', body:'Troubleshoot the RDP service/firewall/NLA, or escalate to the Server Team if the service itself is down.'}
  ]},
 
-{id:'snapshot', cat:'lifecycle', title:'Snapshot Request', sev:'P3', sla:'4h SLA', template:'change',
+{id:'backup-snapshot', cat:'lifecycle', title:'Snapshot Request', sev:'P1', sla:'3h SLA', template:'change', ticket:'INC000105', client:'Client E', status:'In Progress',
  trigger:'Change Request', owner:'Storage / Virtualization Team',
  scope:'Request to take (or restore) a VM snapshot ahead of a change, or a failed scheduled snapshot job.',
  pre:[
@@ -369,7 +371,7 @@ const ISSUES = [
    {title:'Hold &amp; Reschedule', laneLabel:'Storage / Virtualization Team', body:'Consolidate stale snapshots first; escalate to Storage/Virtualization if the datastore is critically low, then reschedule.'}
  ]},
 
-{id:'policy-update', cat:'lifecycle', title:'Policy Update', sev:'P3', sla:'24h SLA', template:'change',
+{id:'config-policy', cat:'lifecycle', title:'Policy Update', sev:'P3', sla:'4h SLA', template:'change', ticket:'INC000107', client:'Client G', status:'Scheduled',
  trigger:'Change Request (CAB)', owner:'Change / Security Team',
  scope:'Request to apply or modify a GPO, security baseline, or firewall/AV policy.',
  pre:[
@@ -385,7 +387,7 @@ const ISSUES = [
    {title:'Hold &amp; Reschedule', laneLabel:'Change / Security Team', body:'Hold for approval, or escalate to Change/Security for sign-off before touching production policy.'}
  ]},
 
-{id:'patching', cat:'lifecycle', title:'Patching', sev:'P3', sla:'Per patch window', template:'change',
+{id:'patching', cat:'lifecycle', title:'Patching', sev:'P3', sla:'6h SLA', template:'change', ticket:'INC000108', client:'Client H', status:'Scheduled',
  trigger:'Scheduled Change', owner:'Change Manager',
  scope:'Scheduled OS/security patch deployment via WSUS/SCCM, or an emergency out-of-band patch.',
  pre:[
@@ -401,7 +403,7 @@ const ISSUES = [
    {title:'Hold &amp; Reschedule', laneLabel:'Change Manager', body:'Resolve the blocker (space, backup) and reschedule; escalate to the Change Manager if the approved window is at risk.'}
  ]},
 
-{id:'server-build', cat:'lifecycle', title:'Server Build', sev:'P4', sla:'3 business days', template:'change',
+{id:'server-build', cat:'lifecycle', title:'Server Build', sev:'P3', sla:'8h SLA', template:'change', ticket:'INC000109', client:'Client I', status:'In Progress',
  trigger:'Service Request (CAB)', owner:'Network / CAB',
  scope:'Request to provision a new server, physical or virtual, against the standard build.',
  pre:[
@@ -417,7 +419,7 @@ const ISSUES = [
    {title:'Hold &amp; Reschedule', laneLabel:'Network / CAB', body:'Return to requester/CAB for the missing detail, or to Network if IP allocation is the blocker.'}
  ]},
 
-{id:'server-decom', cat:'lifecycle', title:'Server Decommissioning', sev:'P4', sla:'5 business days', template:'change',
+{id:'server-decomm', cat:'lifecycle', title:'Server Decommissioning', sev:'P4', sla:'6h SLA', template:'change', ticket:'INC000110', client:'Client J', status:'Pending Approval',
  trigger:'Service Request (CAB)', owner:'CAB / Business Owner',
  scope:'Approved request to retire and remove a server from the environment.',
  pre:[
@@ -433,7 +435,7 @@ const ISSUES = [
    {title:'Hold &amp; Reschedule', laneLabel:'CAB / Business Owner', body:'Engage the app/business owner to confirm the dependency; escalate to CAB if sign-offs conflict.'}
  ]},
 
-{id:'server-restore', cat:'lifecycle', title:'Server Restoration', sev:'P2', sla:'4h SLA', template:'change',
+{id:'disaster-recovery', cat:'lifecycle', title:'Server Restoration', sev:'P1', sla:'6h SLA', template:'change', ticket:'INC000112', client:'Client L', status:'In Progress',
  trigger:'User / Business Request', owner:'Backup / Storage Team',
  scope:'Request to restore a server or specific data from backup — corruption, deletion, or DR test.',
  pre:[
@@ -449,7 +451,7 @@ const ISSUES = [
    {title:'Hold &amp; Reschedule', laneLabel:'Backup / Storage Team', body:'Check earlier backup points; escalate to Backup/Storage — this may become a data-loss conversation.'}
  ]},
 
-{id:'server-down', cat:'incident', title:'Server Down', sev:'P1', sla:'30m SLA', template:'incident',
+{id:'server-down', cat:'incident', title:'Server Down', sev:'P1', sla:'2h SLA', template:'incident', ticket:'INC000106', client:'Client F', status:'Resolved',
  trigger:'Monitoring Alert', owner:'Datacenter / Hardware Team',
  scope:'Monitoring shows a host unreachable, or a report that a server does not respond.',
  pre:[
@@ -467,11 +469,11 @@ const ISSUES = [
  ],
  post:{title:'Post-Incident Review', body:'Run a blameless PIR within 48 hours — timeline, root cause, and follow-up actions.'}},
 
-{id:'hw-host', cat:'incident', title:'Hardware Host Issue', sev:'P2', sla:'4h SLA', template:'hardware',
+{id:'hw-host', cat:'incident', title:'Hardware Host Issue', sev:'P1', sla:'5h SLA', template:'hardware', ticket:'INC000114', client:'Client N', status:'Vendor Engaged',
  trigger:'Monitoring Alert (iLO/iDRAC)', owner:'Hardware Vendor',
  scope:'Physical host raising a hardware fault — disk, memory, PSU, or fan.',
  pre:[
-   {title:'Acknowledge Hardware Alert', body:'Alert acknowledged in monitoring; priority set to <code>P2</code>.'},
+   {title:'Acknowledge Hardware Alert', body:'Alert acknowledged in monitoring; priority set to <code>P1</code>.'},
    {title:'Redundancy Check', checklist:true, checks:['Check the hardware event log to identify the failed component.','Check redundancy status — RAID rebuild, PSU failover, cluster HA state.','Determine whether guest VMs are affected or at risk.']}
  ],
  decision:'Is the failed component redundant/hot-swappable without downtime?',
@@ -485,7 +487,7 @@ const ISSUES = [
    {title:'Vendor Replaces Component', laneLabel:'Hardware Vendor', body:'Vendor dispatches and replaces the part; L1 confirms system health afterward.'}
  ]},
 
-{id:'alert', cat:'incident', title:'Alert Triage', sev:'P3', sla:'1h to triage', template:'router',
+{id:'alert', cat:'incident', title:'Alert Triage', sev:'P4', sla:'1h SLA', template:'router', ticket:'INC000115', client:'Client O', status:'Resolved',
  trigger:'Monitoring Alert', owner:'L2 / System Owner',
  scope:'A generic monitoring alert has fired — often the entry point into another runbook.',
  pre:[
@@ -501,7 +503,7 @@ const ISSUES = [
  ],
  close:{title:'Log Outcome', body:'Record the routing decision or diagnosis outcome against the alert for trend analysis.'}},
 
-{id:'dc-issue', cat:'incident', title:'Datacenter Issue', sev:'P1', sla:'30m SLA', template:'incident',
+{id:'datacenter-env', cat:'incident', title:'Datacenter Issue', sev:'P1', sla:'4h SLA', template:'incident', ticket:'INC000116', client:'Client P', status:'In Progress',
  trigger:'Facility Monitoring Alert', owner:'Facilities / DR-BCP Team',
  scope:'A facility-level event — power, cooling, or backbone network — impacting multiple hosts/racks.',
  pre:[
@@ -519,7 +521,7 @@ const ISSUES = [
  ],
  post:{title:'Post-Incident Review', body:'Run a blameless PIR within 48 hours — timeline, root cause, and follow-up actions.'}},
 
-{id:'ip-issue', cat:'netfac', title:'IP Issue', sev:'P3', sla:'2h SLA', template:'network',
+{id:'ip-issue', cat:'netfac', title:'IP Issue', sev:'P1', sla:'2h SLA', template:'network', ticket:'INC000113', client:'Client M', status:'Resolved',
  trigger:'User Request / Monitoring Alert', owner:'Network Team',
  scope:'IP conflict, incorrect assignment, or a DHCP/DNS mismatch causing connectivity problems.',
  pre:[
@@ -535,7 +537,7 @@ const ISSUES = [
    {title:'Escalate to Specialist Team', laneLabel:'Network Team', body:'Escalate to Network — likely a VLAN, subnet, or switch-port configuration issue.'}
  ]},
 
-{id:'port-issue', cat:'netfac', title:'Port Issue', sev:'P3', sla:'2h SLA', template:'network',
+{id:'firewall-port', cat:'netfac', title:'Port Issue', sev:'P1', sla:'3h SLA', template:'network', ticket:'INC000118', client:'Client R', status:'In Progress',
  trigger:'Monitoring Alert / User Report', owner:'Network / App Team',
  scope:'A switch port down/erroring, or a server/application port not responding as expected.',
  pre:[
@@ -551,11 +553,11 @@ const ISSUES = [
    {title:'Escalate to Specialist Team', laneLabel:'Network / App Team', body:'Escalate to Network for a cabling/hardware fault, or to the app team if the service isn\'t listening.'}
  ]},
 
-{id:'battery-issue', cat:'netfac', title:'Battery Issue', sev:'P3', sla:'24h SLA (escalate if urgent)', template:'hardware',
+{id:'battery-issue', cat:'netfac', title:'Battery Issue', sev:'P2', sla:'4h SLA', template:'hardware', ticket:'INC000117', client:'Client Q', status:'Vendor Engaged',
  trigger:'Monitoring Alert', owner:'Facilities / Vendor',
  scope:'A UPS battery or RAID controller cache battery (BBU) fault alert.',
  pre:[
-   {title:'Acknowledge Hardware Alert', body:'Alert acknowledged in monitoring; priority set to <code>P3</code> (re-assess if UPS runtime is critical).'},
+   {title:'Acknowledge Hardware Alert', body:'Alert acknowledged in monitoring; priority set to <code>P2</code> (re-assess if UPS runtime is critical).'},
    {title:'Redundancy Check', checklist:true, checks:['Identify battery type — UPS vs. RAID controller cache battery.','Check age/warranty and current charge health.','For a RAID BBU fault, check for write-through fallback (perf impact).','Check redundant UPS status if a facility power battery.']}
  ],
  decision:'Is a replacement available and the risk currently non-critical?',
@@ -1001,7 +1003,7 @@ function openFlow(id){
     <div class="fh">
       <div class="fh-top">
         <span class="fh-pid">${issue.pid}</span>
-        <div class="fh-tags"><span class="tag">${issue.sev}</span><span class="tag">${issue.sla}</span><span class="tag tmpl">${meta.label}</span></div>
+        <div class="fh-tags"><span class="tag">${issue.sev}</span><span class="tag">${issue.sla}</span><span class="tag tmpl">${meta.label}</span>${issue.ticket?`<span class="tag tkt">${issue.ticket} · ${issue.client}</span>`:''}${issue.status?`<span class="tag stat">Status: ${issue.status}</span>`:''}</div>
       </div>
       <h2>${issue.title}</h2>
       <div class="fh-scope">${catLabel} &nbsp;·&nbsp; ${issue.scope}</div>
