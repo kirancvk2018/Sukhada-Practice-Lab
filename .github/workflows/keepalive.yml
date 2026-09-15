@@ -1,0 +1,29 @@
+# Keeps a free Supabase project awake.
+# Put this at: .github/workflows/keepalive.yml in your repo.
+# Then add two repository secrets under
+#   Settings -> Secrets and variables -> Actions -> New repository secret
+#     SUPABASE_URL  = https://yourproject.supabase.co
+#     SUPABASE_KEY  = your anon public key
+
+name: Supabase keep-alive
+
+on:
+  schedule:
+    - cron: '0 6 * * 1,4'     # Mondays and Thursdays at 06:00 UTC
+  workflow_dispatch:           # also lets you run it by hand from the Actions tab
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST API
+        run: |
+          STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/academy_state?select=id&limit=1" \
+            -H "apikey: ${{ secrets.SUPABASE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_KEY }}")
+          echo "HTTP $STATUS"
+          if [ "$STATUS" != "200" ]; then
+            echo "Keep-alive ping failed — check the project in the Supabase dashboard."
+            exit 1
+          fi
